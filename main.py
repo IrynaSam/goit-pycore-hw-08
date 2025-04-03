@@ -1,9 +1,23 @@
 from handlers import add_contact, change_contact, show_phone, show_all, add_birthday, show_birthday, birthdays
 from parse import parse_input
 from classes import AddressBook
+import pickle
 
+def save_data(book, addressbook):
+    with open(addressbook, "wb") as file:
+        pickle.dump(book, file)
+        
+def load_data(addressbook):
+    try:
+        with open(addressbook, "rb") as file:
+            return  pickle.load(file)
+            
+    except FileNotFoundError:
+        return AddressBook()
+         
+             
 def main():
-    book = AddressBook()
+    book = load_data(addressbook="addressbook.pkl")
     
     print("Welcome to the assistant bot!")
     while True:
@@ -12,6 +26,7 @@ def main():
 
         if cmd in ["close", "exit"]:
             print("Good bye!")
+            save_data(book, "addressbook.pkl")
             break
 
         elif cmd == "hello":
