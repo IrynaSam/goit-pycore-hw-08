@@ -1,4 +1,4 @@
-from handlers import add_contact, change_contact, show_phone, show_all, add_birthday, show_birthday, birthdays
+from handlers import add_contact, change_contact, show_phone, show_all, add_birthday, show_birthday, birthdays, add_email, edit_email, add_address, edit_address
 from parse import parse_input
 from classes import AddressBook
 import pickle
@@ -44,7 +44,15 @@ def main():
         elif cmd == "show-birthday":
             print(show_birthday(args, book))
         elif cmd == "birthdays":
-            print(birthdays(args, book))  
+            print(birthdays(args, book))
+        elif cmd == "add-email":
+            print(add_email(args, book))
+        elif cmd == "edit-email":
+            print(edit_email(args, book))
+        elif cmd == "add-address":
+            print(add_address(args, book))
+        elif cmd == "edit-address":
+            print(edit_address(args, book))     
         else:
             print("Invalid command.")
 

@@ -54,17 +54,25 @@ def show_birthday(args, book: AddressBook):
 
 @input_error
 def birthdays(args, book: AddressBook):
-    result = book.get_upcoming_birthdays()
+    days = 7 # якщо введено команду birthdays без к-сті днів виведена на імениники тижні
+    
+    if args:
+        try:
+            days = int(args[0])
+        except ValueError:
+            return "Будь ласка, введіть число: birthdays 10"
+            
+    result = book.get_upcoming_birthdays(days)
 
     if not any(result.values()):
-        return "Немає іменинників на наступному тижні."
+        return f"Немає іменинників протягом {days} днів."
 
-    lines = ["Привітання на тиждень:"]
+    lines =  [f"Привітання на наступні {days} днів:"]
     for day, names in result.items():
         if names:
             lines.append(f"{day}: {', '.join(names)}")
 
-    return "\n".join(lines)
+    return "\n".join(lines).strip()
 
 
 @input_error
@@ -115,6 +123,78 @@ def show_all(book):
         else:
             lines.append("День народження: не вказано")
         
+        # email
+        if hasattr(record, "email") and record.email:
+            lines.append(f"Email: {record.email.value}")
+        else:
+            lines.append("Email: не вказано")
+        
+        # адреса
+        if hasattr(record, "address") and record.address:
+            lines.append(f"Адреса: {record.address.value}")
+        else:
+            lines.append("Адреса: не вказано")
+        
         lines.append("") 
 
     return "\n".join(lines).strip()
+
+@input_error
+def add_email(args, book: AddressBook):
+    if len(args)<2:
+        return "Введіть ім'я та email: add-email Ім'я email@example.com"
+    name, email = args[0], args[1]
+    record = book.find(name)
+    
+    if record is None:
+        return f"Контакт з іменем '{name}' не знайдено."
+    
+    record.add_email(email)
+    return f"Email для {name} додано: {email}"
+
+@input_error
+def edit_email(args, book: AddressBook):
+    if len(args) <2:
+        return "Введіть ім'я та новий email: edit-email Ім'я new_email@example.com"
+    
+    name, new_email = args[0], args[1]
+    record = book.find(name)
+    
+    if record is None:
+        return f"Контакт з іменем '{name}' не знайдено."
+    
+    record.edit_email(new_email)
+    return f"Email для {name} змінено на: {new_email}"
+
+@input_error
+def add_address(args, book: AddressBook):
+    if len(args) <2:
+        return "Введіть ім'я та адресу: add-address Ім'я Адреса"
+    
+    name = args[0]
+    address_str = " ".join(args[1:])
+    record = book.find(name)
+    
+    if record is None:
+        return f"Контакт з іменем '{name}' не знайдено."
+    
+    record.add_address(address_str)
+    return f"Адреса для {name} додана: {address_str}"
+
+@input_error
+def edit_address(args, book: AddressBook):
+    
+    
+    if len(args) <2:
+        return "Введіть ім'я та нову адресу: edit-address Ім'я Нова адреса" 
+    
+    name = args[0]
+    new_address = " ".join(args[1:])
+    record = book.find(name)
+    
+    if record is None:
+        return f"Контакт з іменем '{name}' не знайдено."
+    
+    record.edit_address(new_address)
+    return f"Адреса для {name} змінена на: {new_address}" 
+    
